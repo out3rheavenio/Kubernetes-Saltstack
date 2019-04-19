@@ -1,5 +1,7 @@
 {%- set k8sVersion = pillar['kubernetes']['version'] -%}
 {%- set masterCount = pillar['kubernetes']['master']['count'] -%}
+{%- set ca_root_dir =  pillar['kubernetes']['ca_root_dir'] -%} 
+
 
 include:
   - k8s-master/etcd
@@ -65,7 +67,7 @@ include:
     - group: root
     - mode: 644
 
-/var/lib/kubernetes/encryption-config.yaml:    
+{{ ca_root_dir }}/encryption-config.yaml:    
     file.managed:
     - source: salt://k8s-master/encryption-config.yaml
     - user: root
@@ -91,16 +93,16 @@ kube-apiserver:
     - enable: True
     - watch:
       - /etc/systemd/system/kube-apiserver.service
-      - /var/lib/kubernetes/kubernetes.pem
+      - {{ ca_root_dir}}/kubernetes.pem
 kube-controller-manager:
   service.running:
     - enable: True
     - watch:
       - /etc/systemd/system/kube-controller-manager.service
-      - /var/lib/kubernetes/kubernetes.pem
+      - {{ ca_root_dir }}/kubernetes.pem
 kube-scheduler:
   service.running:
    - enable: True
    - watch:
      - /etc/systemd/system/kube-scheduler.service
-     - /var/lib/kubernetes/kubernetes.pem
+     - {{ ca_root_dir }}/kubernetes.pem

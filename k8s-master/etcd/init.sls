@@ -1,5 +1,6 @@
 {%- set etcdVersion = pillar['kubernetes']['master']['etcd']['version'] -%}
 {%- set masterCount = pillar['kubernetes']['master']['count'] -%}
+{%- set ca_root_dir =  pillar['kubernetes']['ca_root_dir'] -%} 
 
 /etc/etcd:
   file.directory:
@@ -9,13 +10,13 @@
 
 /etc/etcd/kubernetes-key.pem:
   file.symlink:
-    - target: /var/lib/kubernetes/kubernetes-key.pem
+    - target: {{ ca_root_dir}}/kubernetes-key.pem
 /etc/etcd/kubernetes.pem:
   file.symlink:
-    - target: /var/lib/kubernetes/kubernetes.pem
+    - target: {{ ca_root_dir}}/kubernetes.pem
 /etc/etcd/ca.pem:
   file.symlink:
-    - target: /var/lib/kubernetes/ca.pem
+    - target: {{ ca_root_dir}}/ca.pem
 
 etcd-latest-archive:
   archive.extracted:

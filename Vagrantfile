@@ -22,8 +22,8 @@ Vagrant.configure("2") do |config|
   
     boxes = [
       { :name => "kube-master", :ip => "10.240.0.10", :OS => "bento/ubuntu-18.04", :fqdn => "#{:name}.motherbase"},
-      { :name => "kube-node1", :ip => "10.240.0.11", :OS => "bento/ubuntu-18.04", :fqdn => "#{:name}.motherbase"},
-      { :name => "kube-node2", :ip => "10.240.0.12", :OS => "bento/ubuntu-18.04", :fqdn => "#{:name}.motherbase"},
+      #{ :name => "kube-node1", :ip => "10.240.0.11", :OS => "bento/ubuntu-18.04", :fqdn => "#{:name}.motherbase"},
+      #{ :name => "kube-node2", :ip => "10.240.0.12", :OS => "bento/ubuntu-18.04", :fqdn => "#{:name}.motherbase"},
     ]
   
     # Provision each of the VMs.
@@ -43,7 +43,8 @@ Vagrant.configure("2") do |config|
             chmod +x ./kubectl
             mv ./kubectl /usr/local/bin/kubectl
             apt-get update -y && \
-            apt-get install -y curl salt-minion gnupg2
+            apt-get install -y curl salt-minion gnupg2 swig python3-pip
+            pip install m2crypto
             echo 'master: kube-master' >> /etc/salt/minion
             systemctl restart salt-minion
         SHELL
@@ -52,7 +53,7 @@ Vagrant.configure("2") do |config|
             config.vm.provision "shell", inline: <<-SHELL
                 apt-get update -y && \
                 apt-get install -y curl salt-master
-                systemctl restart salt-master         
+                systemctl restart salt-master      
             SHELL
         end
       end

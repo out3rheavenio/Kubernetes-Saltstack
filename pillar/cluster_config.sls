@@ -1,6 +1,7 @@
 kubernetes:
   version: v1.11.2
   domain: cluster.local
+  ca_root_dir: /etc/pki/kubernetes
   master:
     count: 1
     hostname: kube-master

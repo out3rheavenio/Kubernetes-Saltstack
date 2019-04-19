@@ -7,6 +7,7 @@
 {%- set node01ip =  pillar['kubernetes']['master']['cluster']['node01']['ipaddr'] -%} 
 {%- set node02ip =  pillar['kubernetes']['master']['cluster']['node02']['ipaddr'] -%} 
 {%- set node03ip =  pillar['kubernetes']['master']['cluster']['node03']['ipaddr'] -%} 
+{%- set ca_root_dir =  pillar['kubernetes']['ca_root_dir'] -%} 
 {% if hostname == node01 %}
 	{% set currentip = node01ip %}
 {% elif hostname == node02 %}
@@ -33,18 +34,18 @@ ExecStart=/usr/bin/kube-apiserver \
   --allow-privileged=true \
   --authorization-mode=RBAC \
   --enable-swagger-ui=true \
-  --etcd-cafile=/var/lib/kubernetes/ca.pem \
-  --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \
-  --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \
-  --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \
-  --client-ca-file=/var/lib/kubernetes/ca.pem \
+  --etcd-cafile={{ ca_root_dir}}/ca.pem \
+  --etcd-certfile={{ ca_root_dir}}/kubernetes.pem \
+  --etcd-keyfile={{ ca_root_dir }}/kubernetes-key.pem \
+  --kubelet-certificate-authority={{ ca_root_dir }}/ca.pem \
+  --client-ca-file={{ ca_root_dir}}/ca.pem \
   --service-cluster-ip-range={{ clusterIpRange }} \
   --service-node-port-range=30000-32767 \
-  --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \
-  --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem \
+  --tls-cert-file={{ ca_root_dir }}/kubernetes.pem \
+  --tls-private-key-file={{ ca_root_dir }}/kubernetes-key.pem \
   --enable-bootstrap-token-auth \
-  --token-auth-file=/var/lib/kubernetes/token.csv \
-  --service-account-key-file=/var/lib/kubernetes/ca-key.pem \
+  --token-auth-file={{ ca_root_dir}}/token.csv \
+  --service-account-key-file={{ ca_root_dir}}/ca-key.pem \
   --runtime-config=batch/v2alpha1=true  \
   --insecure-bind-address=127.0.0.1 \
   --event-ttl=1h \
@@ -52,7 +53,7 @@ ExecStart=/usr/bin/kube-apiserver \
   --kubelet-https=true \
   --apiserver-count=3 \
   --runtime-config=api/all \
-  --experimental-encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \
+  --experimental-encryption-provider-config={{ ca_root_dir }}/encryption-config.yaml \
   --etcd-servers=https://{{ node01ip }}:2379,https://{{ node02ip }}:2379,https://{{ node03ip }}:2379 \
   --v=2
 Restart=on-failure

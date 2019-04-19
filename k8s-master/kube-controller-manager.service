@@ -1,5 +1,6 @@
 ### THIS FILE IS MANAGED BY SALTSTACK
 {%- set clusterIpRange =  pillar['kubernetes']['global']['clusterIP-range'] -%} 
+{%- set ca_root_dir =  pillar['kubernetes']['ca_root_dir'] -%} 
 [Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -9,12 +10,12 @@ ExecStart=/usr/bin/kube-controller-manager \
   --cluster-name=kubernetes \
   --leader-elect=true \
   --master=http://127.0.0.1:8080 \
-  --root-ca-file=/var/lib/kubernetes/ca.pem \
+  --root-ca-file={{ ca_root_dir}}/ca.pem \
   --pod-eviction-timeout 30s \
-  --service-account-private-key-file=/var/lib/kubernetes/ca-key.pem \
+  --service-account-private-key-file={{ ca_root_dir}}/ca-key.pem \
   --cluster-name=kubernetes \
-  --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \
-  --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \
+  --cluster-signing-cert-file={{ ca_root_dir}}/ca.pem \
+  --cluster-signing-key-file={{ ca_root_dir}}/ca-key.pem \
   --service-cluster-ip-range={{ clusterIpRange }} \
   --node-startup-grace-period 30s \
   --v=2

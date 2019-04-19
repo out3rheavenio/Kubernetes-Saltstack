@@ -1,3 +1,4 @@
+{%- set ca_root_dir =  pillar['kubernetes']['ca_root_dir'] -%} 
 ### THIS FILE IS MANAGED BY SALTSTACK
 [Unit]
 Description=Kubernetes Scheduler
